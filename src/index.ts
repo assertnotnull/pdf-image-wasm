@@ -3,7 +3,23 @@ import { writeFile } from "node:fs/promises";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 import { getPageAsImage, getPdf, toUint8Array } from "./pdf";
 
-export async function convert(pdf: string, { scale = 2, pageRange = [] }) {
+interface ConvertOptions {
+	scale?: number;
+	pageRange?: number[];
+}
+
+/**
+ * Convert a PDF to images - scaling to 2x by default
+ * @param pdf - The PDF file to convert
+ * @param options - The options for the conversion
+ * @returns An array of images
+ */
+export async function convert(
+	pdf: string | Buffer | Uint8Array | ArrayBuffer,
+	options: ConvertOptions = { scale: 2, pageRange: [] },
+) {
+	const { scale = 2, pageRange = [] } = options;
+
 	const pdfData = await getPdf(pdf);
 
 	const document = await getDocument({

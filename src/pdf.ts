@@ -1,6 +1,7 @@
 import { Canvas } from "@napi-rs/canvas";
 import { Result } from "neverthrow";
 import { readFile } from "node:fs/promises";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 
 export const getPageAsImage = async (
 	document: PDFDocumentProxy,
@@ -27,7 +28,7 @@ export const toUint8Array = (image: Buffer) => {
 const toUrl = (url: string) => new URL(url);
 const safeUrl = Result.fromThrowable(toUrl, () => ({ message: "Invalid URL" }));
 
-export async function getPdf(pdf: string) {
+export async function getPdf(pdf: string | Buffer | Uint8Array | ArrayBuffer) {
 	if (typeof pdf === "string") {
 		const url = safeUrl(pdf);
 		if (url.isOk()) {
