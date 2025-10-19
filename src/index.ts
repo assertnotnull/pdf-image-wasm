@@ -5,7 +5,7 @@ import { getPageAsImage, getPdf, toUint8Array } from "./pdf";
 
 interface ConvertOptions {
 	scale?: number;
-	pageRange?: number[];
+	pages?: number[];
 }
 
 /**
@@ -16,9 +16,9 @@ interface ConvertOptions {
  */
 export async function convert(
 	pdf: string | Buffer | Uint8Array | ArrayBuffer,
-	options: ConvertOptions = { scale: 2, pageRange: [] },
+	options: ConvertOptions = { scale: 2, pages: [] },
 ) {
-	const { scale = 2, pageRange = [] } = options;
+	const { scale = 2, pages: pageRange = [] } = options;
 
 	const pdfData = await getPdf(pdf);
 	if (pdfData.isErr()) {
