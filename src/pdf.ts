@@ -1,5 +1,5 @@
 import { Canvas } from "@napi-rs/canvas";
-import { Result } from "neverthrow";
+import { err, ok, Result, ResultAsync } from "neverthrow";
 import { readFile } from "node:fs/promises";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
@@ -12,13 +12,10 @@ export const getPageAsImage = async (
 	const viewport = page.getViewport({ scale });
 
 	const canvas = new Canvas(viewport.width, viewport.height);
-	canvas.width = viewport.width;
-	canvas.height = viewport.height;
 
 	await page.render({ canvas, viewport }).promise;
 
-	const image = canvas.toBuffer("image/jpeg");
-	return image;
+	return toUint8Array(canvas.toBuffer("image/jpeg"));
 };
 
 export const toUint8Array = (image: Buffer) => {
@@ -32,16 +29,27 @@ export async function getPdf(pdf: string | Buffer | Uint8Array | ArrayBuffer) {
 	if (typeof pdf === "string") {
 		const url = safeUrl(pdf);
 		if (url.isOk()) {
-			const resp = await fetch(pdf);
-			return new Uint8Array(await resp.arrayBuffer());
+			const resp = await ResultAsync.fromPromise(fetch(pdf), () => ({
+				message: "Failed to fetch PDF",
+			}));
+			if (resp.isOk()) {
+				return ok(new Uint8Array(await resp.value.arrayBuffer()));
+			}
+			return err({ message: resp.error.message });
 		} else if (/pdfData:pdf\/([a-zA-Z]*);base64,([^"]*)/.test(pdf)) {
-			return new Uint8Array(Buffer.from(pdf.split(",")[1], "base64"));
+			return ok(new Uint8Array(Buffer.from(pdf.split(",")[1], "base64")));
 		} else {
-			return new Uint8Array(await readFile(pdf));
+			const res = await ResultAsync.fromPromise(readFile(pdf), () => ({
+				message: "Failed to read PDF file",
+			}));
+			if (res.isOk()) {
+				return ok(new Uint8Array(res.value));
+			}
+			return err({ message: res.error.message });
 		}
 	} else if (Buffer.isBuffer(pdf)) {
-		return new Uint8Array(pdf);
+		return ok(new Uint8Array(pdf));
 	} else {
-		return pdf;
+		return ok(pdf);
 	}
 }

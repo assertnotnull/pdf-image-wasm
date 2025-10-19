@@ -21,9 +21,12 @@ export async function convert(
 	const { scale = 2, pageRange = [] } = options;
 
 	const pdfData = await getPdf(pdf);
+	if (pdfData.isErr()) {
+		throw new Error(pdfData.error.message);
+	}
 
 	const document = await getDocument({
-		data: pdfData,
+		data: pdfData.value,
 		disableFontFace: true,
 		verbosity: 0,
 	}).promise;
