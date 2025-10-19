@@ -1,23 +1,27 @@
-# tsdown-starter
+# pdf-image-wasm
 
-A starter for creating a TypeScript package.
+A library for converting PDF to images using WebAssembly.
+
+Inspired of https://github.com/ol-th/pdf-img-convert.js but uses https://github.com/Brooooooklyn/canvas so there's no postinstall.
+
+This is ready for BaaS functions such as Supabase functions.
 
 ## Development
 
 - Install dependencies:
 
 ```bash
-npm install
+bun i
 ```
 
 - Run the unit tests:
 
 ```bash
-npm run test
+bun test
 ```
 
 - Build the library:
 
 ```bash
-npm run build
+bun run build
 ```
