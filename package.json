@@ -1,6 +1,6 @@
 {
 	"name": "pdf-image-wasm",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "A library for converting PDF to images using WebAssembly.",
 	"type": "module",
 	"license": "MIT",
