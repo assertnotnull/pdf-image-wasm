@@ -15,7 +15,7 @@ export const getPageAsImage = async (
 
 	await page.render({ canvas, viewport }).promise;
 
-	return toUint8Array(canvas.toBuffer("image/jpeg"));
+	return canvas.toBuffer("image/jpeg");
 };
 
 export const toUint8Array = (image: Buffer) => {
