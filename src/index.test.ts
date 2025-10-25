@@ -30,6 +30,10 @@ async function createOutputDir(dir: string) {
 }
 
 describe("convert", () => {
+	afterAll(() => {
+		mock.clearAllMocks();
+	});
+
 	describe("with mocks", () => {
 		afterEach(() => {
 			mock.restore();
