@@ -40,6 +40,5 @@
 		"@napi-rs/canvas": "^0.1.80",
 		"neverthrow": "^8.2.0",
 		"pdfjs-dist": "^5.4.296"
-	},
-	"private": true
+	}
 }
