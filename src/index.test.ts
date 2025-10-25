@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, beforeEach, describe, expect, it, mock } from "bun:test";
 import { convert } from ".";
-import { writeFile } from "node:fs/promises";
+import { rm, rmdir, writeFile } from "node:fs/promises";
 import { afterEach } from "node:test";
 import { ok } from "neverthrow";
 import { mkdir } from "node:fs/promises";
@@ -19,19 +19,15 @@ async function loadSamplePdf(): Promise<Uint8Array> {
 	return new Uint8Array(buffer);
 }
 
-async function createOutputDir() {
+async function createOutputDir(dir: string) {
 	try {
-		await mkdir("output", { recursive: true });
+		await mkdir(dir, { recursive: true });
 	} catch (error) {
 		if ((error as { code?: string }).code !== "EEXIST") {
 			throw error;
 		}
 	}
 }
-
-beforeEach(async () => {
-	await createOutputDir();
-});
 
 describe("convert", () => {
 	describe("with mocks", () => {
@@ -73,9 +69,17 @@ describe("convert", () => {
 		});
 	});
 
-	it("should convert a PDF local file to images", async () => {
-		const images = await convert("./fixture/sample.pdf");
-		await saveImages(images, "test-output");
-		expect(images.length).toBe(1);
+	describe("with local file input", () => {
+		it("should convert a PDF local file to images", async () => {
+			const images = await convert("./fixture/sample.pdf");
+			const outputDir = "test-output";
+			await createOutputDir(outputDir);
+			await saveImages(images, outputDir);
+			expect(images.length).toBe(1);
+		});
+
+		afterAll(async () => {
+			await rm("./test-output", { recursive: true });
+		});
 	});
 });
