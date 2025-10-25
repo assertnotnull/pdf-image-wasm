@@ -25,3 +25,11 @@ bun test
 ```bash
 bun run build
 ```
+
+- Publish the library
+
+Install [Task](https://taskfile.dev/)
+
+```bash
+task publish
+```
