@@ -15,7 +15,7 @@ interface ConvertOptions {
 export async function convert(
 	pdf: string | Buffer | Uint8Array | ArrayBuffer,
 	options: ConvertOptions = { scale: 2, pages: [] },
-) {
+): Promise<Uint8Array[]> {
 	const { scale = 2, pages = [] } = options;
 
 	const pdfResult = await loadPdf(pdf);
