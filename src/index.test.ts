@@ -4,6 +4,7 @@ import { rm, rmdir, writeFile } from "node:fs/promises";
 import { afterEach } from "node:test";
 import { ok } from "neverthrow";
 import { mkdir } from "node:fs/promises";
+import { existsSync } from "node:fs";
 
 async function saveImages(images: Uint8Array[], folder: string) {
 	const promises = images.map(async (image, index) => {
@@ -82,8 +83,19 @@ describe("convert", () => {
 			expect(images.length).toBe(1);
 		});
 
+		it("should convert an pdf arrayBuffer", async () => {
+			const buffer = await loadSamplePdf();
+			const images = await convert(buffer);
+			const outputDir = "test-output";
+			await createOutputDir(outputDir);
+			await saveImages(images, outputDir);
+			expect(images.length).toBe(1);
+		});
+
 		afterAll(async () => {
-			await rm("./test-output", { recursive: true });
+			if (existsSync("./test-output")) {
+				await rm("./test-output", { recursive: true });
+			}
 		});
 	});
 });
